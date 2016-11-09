@@ -11,13 +11,15 @@ dm.Users = db.sequelize.define(
     username: {
       type: Sequelize.STRING, //TODO: set required and unique for some fields
       allowNull: false,
+      unique: true
     },
     hashedPass: {
       type: Sequelize.STRING,
       allowNull: false,
     },
     idToken: {
-      type: Sequelize.STRING
+      type: Sequelize.STRING,
+      unique: true
     },
     name: {
       type: Sequelize.STRING
@@ -27,6 +29,7 @@ dm.Users = db.sequelize.define(
     },
     email: {
       type: Sequelize.STRING,
+      unique:true
     },
     clearance: {
       type: Sequelize.STRING,
