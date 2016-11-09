@@ -2,12 +2,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const mongoose = require('mongoose');
-const config = require('../config.json');
 
-mongoose.Promise = global.Promise;
-
-mongoose.connect('mongodb://localhost/ja_events');
+const models = {};
 
 fs.readdirSync(__dirname).filter(function (file) {
   return (file.indexOf('.') !== 0) && (file !== 'index.js');
@@ -15,4 +11,4 @@ fs.readdirSync(__dirname).filter(function (file) {
   require(path.join(__dirname, file));
 });
 
-module.exports = mongoose;
+module.exports = models;

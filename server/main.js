@@ -1,25 +1,27 @@
 'use strict';
 
-const http = require('http');
 const koa = require('koa');
-const bodyParser = require('koa-bodyparser');
-const cors = require('koa-cors');
+// const bodyParser = require('koa-bodyparser');
+// const cors = require('koa-cors');
 
 const config = require('./config.json');
 const router = require('./router.js');
-const db = require('./models');
+const db = require('./db.js');
+
 const app = koa();
 
-app.use(cors());
-app.use(bodyParser());
-app.use(router.routes());
+// app.use(cors());
+// app.use(bodyParser());
+//app.use(router.routes());
 
-const hostname = config.dev.hostname;
-const port = config.dev.port;
+const port = config.port;
 
-db.connection.on('error', console.error.bind(console, 'connection error on db:'));
-db.connection.once('open', function() {
-  app.listen(config.dev.port, function () {
-    console.log('Koa server listening on port ' + config.dev.port);
+db.sequelize.sync()
+  .then(function() {
+    app.listen(port, function () {
+      console.log('Database connection successful. Server listening on port ' + port);
+    });
+  })
+  .catch(function(){
+    console.log('Database connecting error. Server not listening.');
   });
-});
