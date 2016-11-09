@@ -3,10 +3,9 @@
 const router = require('koa-router')();
 const bodyParser = require('body-parser');
 
-// const eventsCtrl = require('./controller.js');
+const usersCtrl = require('./controllers/users.js');
 
-// router.get('/events', eventsCtrl.getLatest);
-
-// router.post('/events', eventsCtrl.post);
+router.get('/login', usersCtrl.login);
+// router.post('/createuser', usersCtrl.createUser);
 
 module.exports = router;
