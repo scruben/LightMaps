@@ -61,6 +61,11 @@ exports.login = function* (next) {
           };
         }
       }
+    } else {
+      this.status = 401;
+      this.body = {
+        status: 'Unauthorized'
+      }
     }
   } catch (err) {
     this.status = 500;

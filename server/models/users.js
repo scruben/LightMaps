@@ -9,7 +9,7 @@ dm.Users = db.sequelize.define(
   'users',
   {
     username: {
-      type: Sequelize.STRING, //TODO: set required and unique for some fields
+      type: Sequelize.STRING, //TODO: check the unique modifier it is working
       allowNull: false,
       unique: true
     },
