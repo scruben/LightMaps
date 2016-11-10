@@ -50,3 +50,18 @@ exports.login = function* (next) {
     this.body = err;
   }
 };
+
+// exports.createUser = function* (next) {
+//   let user = yield new Promise(function(resolve,reject) {
+//     try {
+//       userModel.createUser({
+//         username: 'ruben',
+//         hashedPass: 'asdfasdfasdfasdfas',
+//         clearance: 'admin'
+//       });
+//       resolve('done!');
+//     } catch (err) {
+//       reject(err);
+//     }
+//   });
+// };
