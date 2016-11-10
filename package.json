@@ -5,7 +5,9 @@
   "main": "server/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server/main.js"
+    "start": "nodemon server/main.js",
+    "app-server": "./app/react-native start",
+    "app": "./app/react-native run-android"
   },
   "repository": {
     "type": "git",
