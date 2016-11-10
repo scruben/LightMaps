@@ -1,8 +1,12 @@
 'use strict';
 
-const db = require('../db.js');
 const Sequelize = require('sequelize');
+const bcrypt = require('bcrypt');
+const uuid = require('uuid');
 
+const db = require('../db.js');
+
+const saltRounds = 10;
 const dm = {};
 
 dm.Users = db.sequelize.define(
@@ -51,19 +55,42 @@ dm.getUserHash = function(username) {
   return dm.Users.findOne(queryParam);
 }
 
-dm.changeUserToken = function(username,newToken) {
-  dm.Users.findOne({ where: { username: username } })
-    .then((data) =>{
-      console.log('found');
-      data.updateAttributes({
-        idToken: newToken
-      }).then(() => {
-        return true;
-      })
-    })
-    .catch((err) => {
-      return false;
+dm.setNewIdToken = function(user) {
+  return new Promise(function(resolve,reject) {
+    try {
+      let newToken = uuid.v4();
+      dm.Users.findOne({ where: { username: user } })
+        .then((data) =>{
+          data.updateAttributes({
+            idToken: newToken
+          }).then(() => {
+            resolve(newToken);
+          })
+        })
+        .catch((err) => {
+          reject(err)
+        });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+
+dm.checkPass = function(pass, hash) {
+  return new Promise(function(resolve,reject) {
+    bcrypt.compare(pass, hash, function (err, res) {
+      if (err) {
+        console.log('Error while checking password');
+        resolve(false);
+      }
+      else if (res) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
     });
+  });
 }
 
 dm.createUser = function(user) {

@@ -1,12 +1,9 @@
 'use strict';
 
 const atob = require('atob');
-const bcrypt = require('bcrypt');
-const uuid = require('uuid');
+
 
 const userModel = require('../models/users.js');
-
-const saltRounds = 10;
 
 exports.login = function* (next) {
   try {
@@ -22,21 +19,8 @@ exports.login = function* (next) {
         reject(err);
       }
     });
-    let passOK = yield new Promise(function(resolve,reject) {
-      bcrypt.compare(auth[1], userInfo.hashedPass, function (err, res) {
-        if (err) {
-          console.log('Error while checking password');
-          resolve(false);
-        }
-        else if (res) {
-          resolve(true);
-        } else {
-          resolve(false);
-        }
-      });
-    });
+    let passOK = yield userModel.checkPass(auth[1], userInfo.hashedPass);
     if (passOK) {
-      console.log(userInfo.idToken);
       if (userInfo.idToken && userInfo.idToken !== null && userInfo.idToken !=='') {
         this.status = 200;
         this.body = {
@@ -44,21 +28,15 @@ exports.login = function* (next) {
           idToken: userInfo.idToken
         };
       } else {
-        let newToken = uuid.v4();
-        let changeTokenOK = yield new Promise(function(resolve,reject) {
-          try {
-            let res = userModel.changeUserToken(auth[0],newToken);
-            resolve(res);
-          } catch (err) {
-            reject(err);
-          }
-        });
-        if (res) {
+        let newToken = yield userModel.setNewIdToken(auth[0]);
+        if (newToken && newToken !== '') {
           this.status = 200;
           this.body = {
             status: 'Authorized',
             idToken: newToken
           };
+        } else {
+          this.status = 500;
         }
       }
     } else {
@@ -72,18 +50,3 @@ exports.login = function* (next) {
     this.body = err;
   }
 };
-
-// exports.createUser = function* (next) {
-//   let user = yield new Promise(function(resolve,reject) {
-//     try {
-//       userModel.createUser({
-//         username: 'ruben',
-//         hashedPass: 'asdfasdfasdfasdfas',
-//         clearance: 'admin'
-//       });
-//       resolve('done!');
-//     } catch (err) {
-//       reject(err);
-//     }
-//   });
-// };
