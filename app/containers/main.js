@@ -15,8 +15,8 @@ import { createStore, applyMiddleware, compose } from 'redux';
 const RouterWithRedux = connect()(Router);
 import reducers from '../reducers';
 
-import LogInComponent from '../components/Login.js';
-import MainSceneComponent from '../components/MainScene.js';
+import LogInComponent from './Login.js';
+import MainSceneComponent from './MainScene.js';
 
 const scenes = Actions.create(
     <Scene key="root">
