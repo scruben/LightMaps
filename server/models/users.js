@@ -86,7 +86,7 @@ dm.checkPass = function(pass, hash) {
   return new Promise(function(resolve,reject) {
     bcrypt.compare(pass, hash, function (err, res) {
       if (err) {
-        resolve(false);
+        reject(err);
       }
       else if (res) {
         resolve(true);
@@ -96,6 +96,45 @@ dm.checkPass = function(pass, hash) {
     });
   });
 }
+
+dm.getWithCredentials = function*(username,pass) {
+  let userInfo = yield new Promise(function(resolve,reject) {
+    try {
+      let query = dm.getUserHash(username);
+      resolve(query);
+    } catch (err) {
+      reject(err);
+    }
+  });
+  let passOK = yield dm.checkPass(pass, userInfo.hashedPass);
+  if (passOK) {
+    let token;
+    if (userInfo.idToken && userInfo.idToken !== null && userInfo.idToken !=='') {
+      token = userInfo.idToken;
+    } else {
+      let newToken = yield dm.setNewIdToken(username);
+      if (newToken && newToken !== '') {
+        token = newToken;
+      } else {
+        throw new Error('Error setting new token.');
+      }
+    }
+    return {
+      status: 'Authorized',
+      idToken: token
+    };
+  } else {
+    return {
+      status: 'Unauthorized'
+    };
+  }
+}
+
+// dm.getWithCredentials = function(username,pass) {
+//   return new Promise(function(resolve,reject){
+//     let userInfo = dm.getUserHash(username);
+//   });
+// }
 
 dm.createUser = function(user) {
   return dm.Users.create({username: user.username, hashedPass: user.hashedPass, clearance: user.clearance});
