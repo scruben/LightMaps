@@ -55,6 +55,15 @@ dm.getUserHash = function(username) {
   return dm.Users.findOne(queryParam);
 }
 
+dm.getUserWithToken = function(token) {
+  let queryParam = {
+    where: {
+      idToken: token
+    }
+  }
+  return dm.Users.findOne(queryParam);
+}
+
 dm.setNewIdToken = function(user) {
   return new Promise(function(resolve,reject) {
     let newToken = uuid.v4();

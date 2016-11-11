@@ -7,8 +7,11 @@ const koa = require('koa');
 const config = require('./config.json');
 const router = require('./router.js');
 const db = require('./db.js');
+const loadUserAuth = require('./auth.js');
 
 const app = koa();
+
+app.use(loadUserAuth);
 
 // app.use(cors());
 // app.use(bodyParser());
