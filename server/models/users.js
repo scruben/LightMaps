@@ -57,22 +57,18 @@ dm.getUserHash = function(username) {
 
 dm.setNewIdToken = function(user) {
   return new Promise(function(resolve,reject) {
-    try {
-      let newToken = uuid.v4();
-      dm.Users.findOne({ where: { username: user } })
-        .then((data) =>{
-          data.updateAttributes({
-            idToken: newToken
-          }).then(() => {
-            resolve(newToken);
-          })
-        })
-        .catch((err) => {
-          reject(err)
-        });
-    } catch (err) {
-      reject(err);
-    }
+    let newToken = uuid.v4();
+    dm.Users.findOne({ where: { username: user } })
+      .then(data =>
+        data.updateAttributes({
+          idToken: newToken
+        }))
+      .then(() => {
+        resolve(newToken);
+      })
+      .catch((err) => {
+        reject(err)
+      });
   });
 }
 
@@ -81,7 +77,6 @@ dm.checkPass = function(pass, hash) {
   return new Promise(function(resolve,reject) {
     bcrypt.compare(pass, hash, function (err, res) {
       if (err) {
-        console.log('Error while checking password');
         resolve(false);
       }
       else if (res) {
