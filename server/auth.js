@@ -14,5 +14,6 @@ module.exports = function * (next) {
     }
   }
   yield next;
-
+  // TODO: when middleware in router ...
+  // in case not authorized, not yield next, status 401 and return undefined
 };
