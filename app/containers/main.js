@@ -11,9 +11,11 @@ import {
 import { Router, Scene, Actions, ActionConst } from 'react-native-router-flux';
 import { connect, Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
+import { composeWithDevTools } from 'remote-redux-devtools';
 
 const RouterWithRedux = connect()(Router);
 import reducers from '../reducers';
+import apiClientService from '../middlewares/apiClient.js';
 
 import LogInComponent from './Login.js';
 import MainSceneComponent from './MainScene.js';
@@ -25,14 +27,15 @@ const scenes = Actions.create(
     </Scene>
 );
 
-const middleware = [/* ...your middleware (i.e. thunk) */];
-const store = compose(
+const middleware = [ apiClientService ];
+
+const store = composeWithDevTools(
   applyMiddleware(...middleware)
 )(createStore)(reducers);
 
 export default class lightMap extends Component {
 
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.state = {
       username: '',
@@ -40,15 +43,14 @@ export default class lightMap extends Component {
     };
   }
 
-  render() {
-
-    AsyncStorage.getItem("tokenId").then((value) => {
+  render () {
+    AsyncStorage.getItem('tokenId').then((value) => {
       if (value && value !== '') {
-        this.setState({"tokenId": value});
+        this.setState({'tokenId': value});
         Actions.main();
       }
       else {
-        Alert.alert('You do not have tokenId!');
+        // Automatically goes to log in
       }
     }).catch((error) => {
       Alert.alert('Oooops!');
