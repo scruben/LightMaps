@@ -8,3 +8,10 @@ export const loginAction = (username, password) => ({
     password
   }
 });
+
+export const setIdData = (tokenId, username, role) => ({
+  type: 'SET_IDDATA',
+  tokenId,
+  username,
+  role
+});

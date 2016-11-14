@@ -37,7 +37,9 @@ export default store => next => action => {
     headers.append('Authorization',`Basic ${base64.encode(username+':'+password)}`);
   }
 
-  // if(store.auth.token) headers.append('Authorization', '')
+  // if (store.auth.authToken && store.auth.authToken !== '') {
+  //   headers.append('Authorization', `Bearer ${store.auth.authToken}`);
+  // }
 
   if (typeof endpoint !== 'string') {
     throw new Error('Specify a string endpoint URL.');
@@ -57,7 +59,6 @@ export default store => next => action => {
   return callApi(endpoint, method, headers, data)
   .then(
     response => {
-      console.log(response);
       next(
         actionWith(
           {
@@ -68,7 +69,6 @@ export default store => next => action => {
       );
     },
     error => {
-      console.log(error);
       next(
         actionWith(
           {

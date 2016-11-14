@@ -1,3 +1,5 @@
+import { AsyncStorage } from 'react-native';
+
 const auth = (
   state = {
     username: '',
@@ -7,20 +9,43 @@ const auth = (
   },
   action
 ) => {
-  console.log(action.type);
   switch (action.type) {
   case 'LOGIN_SUCCESS': {
-    let obj = Object.assign({}, state, {
-      authToken: action.response.idToken
-    });
-    return obj;
+    if (action.response.status === 'Authorized') {
+      let idString = JSON.stringify({
+        authToken: action.response.idToken,
+        role: action.response.clearance,
+        username: action.response.username
+      });
+      AsyncStorage.setItem('idData', idString)
+        .then(() => {console.log('Stored idData');})
+        .catch(() => {console.log('Problem storing idData');});
+      return Object.assign({}, state, {
+        authToken: action.response.idToken,
+        role: action.response.clearance,
+        username: action.response.username,
+        statusError: ''
+      });
+    } else {
+      return Object.assign({}, state, {
+        statusError: 'Wrong username or password.'
+      });
+    }
   }
   case 'LOGIN_FAILURE':
     return Object.assign({}, state, {
-      statusError: action.error
+      statusError: 'Wrong username or password.'
     });
   case 'LOGIN_REQUEST':
-    return state;
+    return Object.assign({}, state, {
+      statusError: '' // we clear the status error in case multiple wrong logins
+    });
+  case 'SET_IDDATA':
+    return Object.assign({}, state, {
+      authToken: action.tokenId,
+      username: action.username,
+      role: action.role
+    });
   default:
     return state;
   }

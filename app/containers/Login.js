@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { View, Text, TextInput, Button, Alert, ToastAndroid } from 'react-native';
+import { View, Text, TextInput, Button, Alert, ToastAndroid, AsyncStorage } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { loginAction } from '../actions/login.js';
@@ -15,14 +15,18 @@ class LogInComponent extends Component {
     this.state = {
       _username: '',
       _password: '' ,
-      // authToken: '',
-      // role: '',
-      // status: ''
     };
     this.onPressLogIn = onPressLogIn.bind(this);
   }
 
-  //TODO: load role in the backend and then in the frontend state (and reducers)
+  componentWillReceiveProps (nextProps) {
+    if (this.props.auth.authToken !== nextProps.auth.authToken && nextProps.auth.authToken !== '') {
+      Actions.main();
+    }
+    if (this.props.auth.statusError !== nextProps.auth.statusError && nextProps.auth.statusError !== '') {
+      Alert.alert(nextProps.auth.statusError);
+    }
+  }
 
   render () {
     return (
@@ -41,30 +45,23 @@ class LogInComponent extends Component {
             value={this.state._password}
             secureTextEntry={true}
           />
-        <Text>{this.props.authToken}</Text>
         </View>
-      <Button onPress={this.onPressLogIn} title="Log in" color="#005500" accessibilityLabel="Log in" />
+      <Button
+        onPress={this.onPressLogIn}
+        title="Log in"
+        color="#005500"
+        accessibilityLabel="Log in" />
       </View>
     );
   }
 }
 
 function onPressLogIn () {
-  // ToastAndroid.show(this.props.authToken, ToastAndroid.LONG);
   this.props.loginAction(this.state._username,this.state._password);
 }
-
-const mapStateToProps = (state) => ({
-  username: state.auth.username,
-  role: state.auth.role,
-  authToken: state.auth.authToken,
-  statusError: state.auth.statusError
-});
 
 const mapDispatchToProps = (dispatch) => ({
   loginAction: (user, pass) => dispatch(loginAction(user, pass)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(LogInComponent);
-
-// export default connect(({routes,loginPages}) => ({routes}))(LogInComponent);
+export default connect(({routes, auth})=>({routes, auth}), mapDispatchToProps)(LogInComponent);
