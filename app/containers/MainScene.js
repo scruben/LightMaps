@@ -14,7 +14,6 @@ class MainSceneComponent extends Component {
     super(props);
     AsyncStorage.getItem('idData').then((value) => {
       if (value && value !== '') {
-        Alert.alert(`Found token in storage. Using it...${value}`);
         let idObj = JSON.parse(value);
         this.props.setIdData(idObj.authToken,idObj.username, idObj.role);
         // AsyncStorage.removeItem('idData'); // Temporal way to log out
