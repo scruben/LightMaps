@@ -33,9 +33,9 @@ class MainSceneComponent extends Component {
     AsyncStorage.getItem('idData').then((value) => {
       if (value && value !== '') {
         let idObj = JSON.parse(value);
+        this.props.setIdData('',idObj.username, idObj.role); // Dirty but forces showing elements after login
         this.props.setIdData(idObj.authToken,idObj.username, idObj.role);
         // AsyncStorage.removeItem('idData'); // Temporal way to log out
-
       }
       else {
         Actions.login();
@@ -48,8 +48,6 @@ class MainSceneComponent extends Component {
     this.zoomPlus = zoomPlus.bind(this);
     this.zoomMinus = zoomMinus.bind(this);
     this.currentPos = currentPos.bind(this);
-
-    // Load map data
 
   }
 
