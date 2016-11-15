@@ -34,16 +34,17 @@ ep.createMockPanel = function * () {
 }
 
 ep.getPanels = function * () {
+  console.log(this.request.header);
   if (getPermission('CREATE_PANEL',this.response.header['x-user'])) {
     let queryParam = {
-      where: {
-        // TODO: position of panels inside area (makes no sense load all
-        // element if we can only see a few)
-      }
+      // where: {
+      //   // TODO: position of panels inside area (makes no sense load all
+      //   // element if we can only see a few)
+      // }
     }
     this.type = 'json';
     try {
-      const panels = yield panelModel.Panels.find(queryParam);
+      const panels = yield panelModel.Panels.findAll(queryParam);
       this.body = panels;
     } catch (err) {
       this.status = 500;

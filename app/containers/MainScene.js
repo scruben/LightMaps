@@ -16,8 +16,11 @@ import { Actions } from 'react-native-router-flux';
 import Mapbox, { MapView } from 'react-native-mapbox-gl';
 
 import { setIdData } from '../actions/login.js';
+import { getPanels } from '../actions/map.js';
 
-const accessToken = 'pk.eyJ1Ijoic2NydWJlbiIsImEiOiJjaXZod3gxMnYwMXkzMm9wM3RteXZtMnRjIn0._B1h7EjBMLvDFp6nU4Z2mQ';
+
+
+const accessToken = require('../config.json').mapToken;
 Mapbox.setAccessToken(accessToken);
 
 class MainSceneComponent extends Component {
@@ -32,6 +35,7 @@ class MainSceneComponent extends Component {
         let idObj = JSON.parse(value);
         this.props.setIdData(idObj.authToken,idObj.username, idObj.role);
         // AsyncStorage.removeItem('idData'); // Temporal way to log out
+
       }
       else {
         Actions.login();
@@ -44,8 +48,15 @@ class MainSceneComponent extends Component {
     this.zoomPlus = zoomPlus.bind(this);
     this.zoomMinus = zoomMinus.bind(this);
     this.currentPos = currentPos.bind(this);
+
     // Load map data
 
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.auth.authToken !== nextProps.auth.authToken && nextProps.auth.authToken !== '') {
+      this.props.getPanels({});
+    }
   }
 
   state = {
@@ -56,48 +67,31 @@ class MainSceneComponent extends Component {
     currentPosition: {},
     zoom: 14,
     userTrackingMode: Mapbox.userTrackingMode.none,
-    annotations: [{
-      coordinates: [41.394501,2.197818],
-      type: 'point',
-      title: 'Pingpongworks',
-      subtitle: 'Ping pong school',
-      rightCalloutAccessory: {
-        source: { uri: 'http://pngimg.com/upload/small/ping_pong_PNG10381.png' },
-        height: 25,
-        width: 25
-      },
-      annotationImage: {
-        source: { uri: 'http://pngimg.com/upload/small/ping_pong_PNG10381.png' },
-        height: 25,
-        width: 25
-      },
-      id: 'marker1'
-    }]
   };
 
   onRegionDidChange = (location) => {
     this.setState({ currentZoom: location.zoomLevel });
-    console.log('onRegionDidChange', location);
+    // console.log('onRegionDidChange', location);
   };
   onRegionWillChange = (location) => {
-    console.log('onRegionWillChange', location);
+    // console.log('onRegionWillChange', location);
   };
   onUpdateUserLocation = (location) => {
     // console.log('onUpdateUserLocation', location);
     this.setState({ currentPosition: location });
-    console.log(this.state.currentPosition)
+    // console.log(this.state.currentPosition)
   };
   onOpenAnnotation = (annotation) => {
-    console.log('onOpenAnnotation', annotation);
+    // console.log('onOpenAnnotation', annotation);
   };
   onRightAnnotationTapped = (e) => {
-    console.log('onRightAnnotationTapped', e);
+    // console.log('onRightAnnotationTapped', e);
   };
   onLongPress = (location) => {
-    console.log('onLongPress', location);
+    // console.log('onLongPress', location);
   };
   onTap = (location) => {
-    console.log('onTap', location);
+    // console.log('onTap', location);
   };
 
   render() {
@@ -117,7 +111,7 @@ class MainSceneComponent extends Component {
           loadingEnabled={true}
           styleURL={Mapbox.mapStyles.dark}
           userTrackingMode={this.state.userTrackingMode}
-          annotations={this.state.annotations}
+          annotations={this.props.mapState.panels}
           annotationsAreImmutable
           onChangeUserTrackingMode={this.onChangeUserTrackingMode}
           onRegionDidChange={this.onRegionDidChange}
@@ -194,11 +188,12 @@ function currentPos () {
   this._map.setCenterCoordinate(
     this.state.currentPosition.latitude,
     this.state.currentPosition.longitude,
-    animated = true);
+    animated = false);
 }
 
 const mapDispatchToProps = (dispatch) => ({
   setIdData: (token) => dispatch(setIdData(token)),
+  getPanels: (region) => dispatch(getPanels(region)),
 });
 
-export default connect(({routes, auth})=>({routes, auth}), mapDispatchToProps)(MainSceneComponent);
+export default connect(({routes, auth, mapState})=>({routes, auth, mapState}), mapDispatchToProps)(MainSceneComponent);
