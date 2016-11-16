@@ -13,7 +13,7 @@ dm.Users = db.sequelize.define(
   'users',
   {
     username: {
-      type: Sequelize.STRING, //TODO: check the unique modifier it is working
+      type: Sequelize.STRING, 
       allowNull: false,
       unique: true
     },
@@ -47,7 +47,7 @@ dm.Users = db.sequelize.define(
 
 dm.getUserHash = function(username) {
   let queryParam = {
-    attributes: ['hashedPass','clearance', 'idToken'],
+    attributes: ['hashedPass','clearance', 'idToken', 'username'],
     where: {
       username: username
     }
@@ -121,11 +121,14 @@ dm.getWithCredentials = function*(username,pass) {
     }
     return {
       status: 'Authorized',
-      idToken: token
+      idToken: token,
+      clearance: userInfo.clearance,
+      username: userInfo.username
     };
   } else {
     return {
-      status: 'Unauthorized'
+      status: 'Unauthorized',
+      error: 'Wrong user or password.'
     };
   }
 }
