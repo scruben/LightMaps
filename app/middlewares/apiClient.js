@@ -1,4 +1,4 @@
-const API_ROOT = 'http://10.0.2.2:3000';
+const API_ROOT = require('../config.json').apiRoot;
 
 const base64 = require('base-64');
 
@@ -37,9 +37,10 @@ export default store => next => action => {
     headers.append('Authorization',`Basic ${base64.encode(username+':'+password)}`);
   }
 
-  // if (store.auth.authToken && store.auth.authToken !== '') {
-  //   headers.append('Authorization', `Bearer ${store.auth.authToken}`);
-  // }
+  let currentState = store.getState();
+  if (currentState.auth.authToken && currentState.auth.authToken !== '') {
+    headers.append('Authorization', `Bearer ${currentState.auth.authToken}`);
+  }
 
   if (typeof endpoint !== 'string') {
     throw new Error('Specify a string endpoint URL.');

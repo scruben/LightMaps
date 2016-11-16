@@ -5,6 +5,8 @@ node_modules/
 server/config.json
 
 # app
+app/config.json
+
 
 # OSX
 #

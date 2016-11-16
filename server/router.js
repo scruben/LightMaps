@@ -3,12 +3,14 @@
 const router = require('koa-router')();
 const bodyParser = require('body-parser');
 
-const usersCtrl = require('./controllers/users.js');
+const usersCtrl   = require('./controllers/users.js');
+const panelsCtrl  = require('./controllers/panels.js');
+const authMiddleware = require('./auth.js')
 
 router.get('/login', usersCtrl.login);
 // router.post('/createuser', usersCtrl.createUser);
 
-// Ejemplo de middleware
-// router.get('/farolas', auth_middleware, controllerFunc);
+router.get('/panels', authMiddleware, panelsCtrl.getPanels);
+router.post('/panels', authMiddleware, panelsCtrl.createMockPanel);
 
 module.exports = router;
