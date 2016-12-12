@@ -3,6 +3,9 @@
 ##Intro
 It is a small example of use of react native with redux to create a map app for Android with Mapbox. 
 
+![screenshot_1481532723](https://cloud.githubusercontent.com/assets/13260573/21093717/9983bbd0-c053-11e6-93e3-55e1902c12e2.png)
+![screenshot_1481533403](https://cloud.githubusercontent.com/assets/13260573/21093718/999bfbfa-c053-11e6-8c83-f60fbe811494.png)
+
 ###Prerequisites
 
 For the server:
